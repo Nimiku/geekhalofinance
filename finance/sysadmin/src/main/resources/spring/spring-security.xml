@@ -1,0 +1,135 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security.xsd">
+<http pattern="/resources/**" security="none"></http>
+<http pattern="/error/**" security="none"></http>
+<http pattern="/synTrade/**" security="none"></http>
+<http pattern="/asycTrade/**" security="none"></http>
+<http  entry-point-ref="entryPoint" use-expressions="true" access-decision-manager-ref="accessDecisionManager">
+<!-- 只有使用了permitAll 才可以经过http security filter 的过滤，使用了security=none就不会使csrf生效 -->
+	<intercept-url pattern="/member/memberLogin" access="permitAll"/>
+	<!-- fullyAuthenticated 代表remember的session需要输入完整的密码才可以 授权-->
+  	<intercept-url pattern="/account/*" access="fullyAuthenticated and hasRole('ROLE_REGISTER') " requires-channel="any" />
+  	<intercept-url pattern="/investAccount/*" access="fullyAuthenticated and hasRole('ROLE_REGISTER') and hasRole('ROLE_INVESTOR')" requires-channel="any" />
+  	<intercept-url pattern="/trade/*" access="fullyAuthenticated and hasRole('ROLE_REGISTER') and hasRole('ROLE_INVESTOR')" requires-channel="any" />
+  	<intercept-url pattern="/perm/*" access="hasRole('ROLE_REGISTER')" requires-channel="any" />
+  	<intercept-url pattern="/debet/*" access="hasRole('ROLE_REGISTER')" requires-channel="any" />
+   <access-denied-handler ref="accessDeniedHandler"/>
+   <csrf request-matcher-ref="csrfMatcher"/>
+   <!-- /j_spring_security_logout -->
+   <logout delete-cookies="JSESSIONID" logout-success-url="/" logout-url="/user_logout" invalidate-session="true" />
+   <custom-filter position="CONCURRENT_SESSION_FILTER" ref="myCurrentSessionFilter"/>
+   <custom-filter ref="rememberMeFilter" position="REMEMBER_ME_FILTER"/>
+   <!-- 定制一个登录过滤器 -->
+   <custom-filter position="FORM_LOGIN_FILTER" ref="caSwitchLoginFilter"/>
+   <session-management session-authentication-strategy-ref="sas" invalid-session-url="/member/memberLogin" session-authentication-error-url="/member/memberLogin">
+   </session-management>
+</http>
+<beans:bean id="csrfMatcher" class="com.shourong.invest.base.security.spring.CsrfSecurityRequestMatcher"></beans:bean>
+<beans:bean id="rememberMeFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
+  <beans:property name="rememberMeServices" ref="rememberMeServices"/>
+  <beans:property name="authenticationManager" ref="authenticationManager" />
+</beans:bean>
+<beans:bean id="rememberMeServices" class="org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices">
+	<beans:property name="userDetailsService" ref="customDetailService"></beans:property>
+	<beans:property name="key" value="trust_shourong"></beans:property>
+	<beans:property name="tokenRepository" ref="jdbcTokenRepositoryImpl"></beans:property>
+	<beans:property name="parameter" value="rememberMe"></beans:property>
+	<beans:property name="alwaysRemember" value="false"></beans:property>
+	<!-- token有效期为7天 -->
+	<beans:property name="tokenValiditySeconds" value="604800"></beans:property>
+</beans:bean>
+<beans:bean id="jdbcTokenRepositoryImpl" class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+	<beans:property name="dataSource" ref="dataSource"></beans:property>
+	<beans:property name="createTableOnStartup" value="false"></beans:property>
+</beans:bean>
+<!-- </global-method-security> -->
+<beans:bean id="entryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+	<beans:property name="loginFormUrl" value="/member/memberLogin"></beans:property>
+	<beans:property name="useForward" value="true"></beans:property>
+</beans:bean>
+<beans:bean id="accessDecisionManager" class="com.shourong.invest.base.security.spring.CustomUnanimousBased">
+	<beans:property name="decisionVoters">
+		<beans:list>
+			<beans:bean id="webExpressionVoter" class="org.springframework.security.web.access.expression.WebExpressionVoter" /> 
+			<beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter"></beans:bean>
+			<beans:bean id="authenticationVoter" class="org.springframework.security.access.vote.AuthenticatedVoter"></beans:bean>
+			<!-- <beans:bean id="urlVoter" class="com.shourong.invest.base.security.spring.CustomUrlVoter"></beans:bean> -->
+		</beans:list>
+	</beans:property>
+</beans:bean>
+<beans:bean id="accessDeniedHandler" class="com.shourong.invest.base.security.spring.ShouRongAccessDeniedHandler">
+	<beans:property name="invalidCsrfTokenPage" value="/account/index"></beans:property>
+	<beans:property name="authPage" value="/account/authUser"></beans:property>
+	<beans:property name="loginPage" value="/member/memberLogin"></beans:property>
+	<beans:property name="sysErrorPage" value="/error/sysError"></beans:property>
+	<beans:property name="defaultPage" value="/error/defaultDeny"></beans:property>
+</beans:bean>
+<authentication-manager alias="authenticationManager">
+	<authentication-provider ref="customDaoAuthenticationProvider"></authentication-provider>
+	<authentication-provider ref="rememberMeAuthenticationProvider"></authentication-provider>
+</authentication-manager>
+<beans:bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+	<beans:property name="key" value="trust_shourong"></beans:property>
+</beans:bean>
+<beans:bean name="customDaoAuthenticationProvider" class="com.shourong.invest.base.security.spring.CustomAuthenticationProvider">
+	<beans:property name="passwordEncoder" ref="shaEncoder">
+	</beans:property>
+	<beans:property name="userDetailsService" ref="customDetailService"></beans:property>
+	<beans:property name="saltSource" ref="saltSource"></beans:property>
+</beans:bean>
+<beans:bean id="caSwitchLoginFilter" class="com.shourong.invest.base.security.spring.ShourongCaAuthenticationLoginFilter">
+	<beans:property name="postOnly" value="true"></beans:property>
+	<beans:property name="filterProcessesUrl" value="/srLogin/sr_login"></beans:property>
+	<beans:property name="sessionAuthenticationStrategy" ref="sas"></beans:property>
+	<beans:property name="usernameParameter" value="sr_username"></beans:property>
+	<beans:property name="passwordParameter" value="sr_password"></beans:property>
+	<beans:property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"></beans:property>
+	<beans:property name="authenticationFailureHandler" ref="authenticationFailureHandler"></beans:property>
+	<beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
+	<beans:property name="rememberMeServices" ref="rememberMeServices"></beans:property>
+</beans:bean>
+<!-- 自定义的查询用户权限的实现类 -->
+<beans:bean id="customDetailService" class="com.shourong.invest.base.security.spring.CustomDaoUserDetailsService">
+</beans:bean>
+<beans:bean name="shaEncoder"
+    class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+</beans:bean>
+<beans:bean id="saltSource"
+    class="org.springframework.security.authentication.dao.ReflectionSaltSource">
+	<beans:property name="userPropertyToUse" value="username"></beans:property>    
+</beans:bean>
+<!-- ConcurrentSessionFilter -->
+<beans:bean id="myCurrentSessionFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
+	<beans:property name="sessionRegistry" ref="sessionRegistry"></beans:property>
+	<beans:property name="expiredUrl" value="/member/memberLogin"></beans:property>
+</beans:bean>
+<!-- 登录成功处理器 -->
+<beans:bean id="authenticationSuccessHandler" class="com.shourong.invest.base.security.spring.CustomAuthenticationSuccessHandler">
+	<beans:property name="defaultTargetUrl" value="/account/index"></beans:property>
+</beans:bean>
+<!-- 登录失败处理器 -->
+<beans:bean id="authenticationFailureHandler" class="com.shourong.invest.base.security.spring.CustomSimpleUrlAuthenticationFailureHandler">
+	<beans:property name="defaultFailureUrl" value="/member/memberLogin"></beans:property>
+</beans:bean>
+<!-- session 注册表 -->
+<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl">
+</beans:bean>
+<beans:bean id="sas" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">  
+    <beans:property name="maximumSessions" value="1"></beans:property>  
+    <beans:property name="exceptionIfMaximumExceeded" value="false"></beans:property>  
+    <beans:property name="alwaysCreateSession" value="true"></beans:property>
+    <beans:constructor-arg name="sessionRegistry" ref="sessionRegistry"></beans:constructor-arg>  
+</beans:bean>  
+<beans:bean id="messageSource"  
+        class="org.springframework.context.support.ReloadableResourceBundleMessageSource">  
+        <beans:property name="basename" value="classpath:messages_zh_CN" />  
+    </beans:bean>  
+    <beans:bean id="localeResolver"  
+        class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver" /> 
+</beans:beans>
+

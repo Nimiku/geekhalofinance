@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-4.1.xsd
+http://www.springframework.org/schema/aop
+http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+http://www.springframework.org/schema/security 
+http://www.springframework.org/schema/security/spring-security.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
+<!-- 启用基于spring annotation的DI @Autowired @Required @PostConstruct @Predestory   -->
+<context:annotation-config></context:annotation-config>
+<context:component-scan base-package="com.shourong.invest">
+	<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"></context:include-filter>
+	<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"></context:include-filter>
+</context:component-scan>
+<!-- 以上部分说明，springmvc 只负责管理controller类，其它的类交给spring 去处理 -->
+<!-- 扩展了注解驱动，将请求参数绑定到controller中的控制参数 -->
+<mvc:annotation-driven />
+<!-- <mvc:view-controller path="/" view-name="/"/> -->
+<mvc:resources mapping="/resources/**" location="/resources/">
+</mvc:resources>
+ <mvc:interceptors>
+    <mvc:interceptor>
+        <mvc:mapping path="/**"/>
+        <mvc:exclude-mapping path="/resources/**"/>
+        <bean class="com.shourong.invest.interceptor.LogInterceptor" />
+    </mvc:interceptor>
+    <mvc:interceptor>
+        <mvc:mapping path="/**"/>
+        <mvc:exclude-mapping path="/resources/**"/>
+        <bean class="com.shourong.invest.interceptor.TokenInterceptor" />
+    </mvc:interceptor>
+    <!-- 配置拦截规则，只拦截 register下面的请求，这个地址也是生成给第三方和用户的推广地址开始-->
+    <mvc:interceptor>
+    	<mvc:mapping path="/register/**"/>
+    	<bean class="com.shourong.invest.interceptor.CookieInterceptor"></bean>
+    </mvc:interceptor>
+</mvc:interceptors>
+<!-- 以下部分等价于mvc:annotation-driven-->
+<!-- <bean
+	class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+	<property name="interceptors">
+		<list>
+		<ref bean="logInterceptor"/>
+		</list>
+	</property>
+</bean> -->
+<!-- <bean
+	class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+	<property name="messageConverters">
+		<list>
+			<ref bean="stringHttpMessageConverter" />
+			<ref bean="mappingJacksonHttpMessageConverter" />
+		</list>
+	</property>
+</bean>
+  <bean id="stringHttpMessageConverter"
+	class="org.springframework.http.converter.StringHttpMessageConverter">
+	<property name="supportedMediaTypes">
+		<list>
+			<value>text/html;charset=UTF-8</value>
+		</list>
+	</property>
+</bean>
+<bean id="mappingJacksonHttpMessageConverter"
+	class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+	<property name="supportedMediaTypes">
+		<list>
+			<value>text/html;charset=UTF-8</value>
+		</list>
+	</property>
+</bean> -->
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+	<property name="prefix" value="/WEB-INF/jsp/"></property>
+	<property name="suffix" value=".jsp"></property>
+</bean>
+ <security:global-method-security
+    pre-post-annotations="enabled"
+    secured-annotations="enabled" /> 
+<mvc:default-servlet-handler/>
+</beans>

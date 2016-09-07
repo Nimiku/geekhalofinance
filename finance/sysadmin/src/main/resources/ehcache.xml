@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache updateCheck="false" >
+
+	<diskStore path="java.io.tmpdir/invest/ehcache" />
+
+	<!-- DefaultCache setting. -->
+	<defaultCache maxEntriesLocalHeap="10000" eternal="true" timeToIdleSeconds="0" timeToLiveSeconds="0"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+    <cache name="queryCache"
+           maxElementsInMemory="10000"
+           overflowToDisk="true"
+           eternal="true"
+           timeToLiveSeconds="0"
+           timeToIdleSeconds="0"
+           diskPersistent="true"
+           diskExpiryThreadIntervalSeconds="600"/>
+    <!-- <cache name="org.apache.shiro.realm.text.PropertiesRealm-0-accounts"
+           maxElementsInMemory="1000"
+           eternal="true"
+           overflowToDisk="true"/> -->
+    
+</ehcache>

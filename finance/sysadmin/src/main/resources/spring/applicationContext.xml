@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:p="http://www.springframework.org/schema/p"
+xmlns:cache="http://www.springframework.org/schema/cache"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/cache
+http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<!-- 这种方式不灵活，用动态的进行配置-->
+	<!-- <context:property-placeholder location="classpath:config.properties" /> -->
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="cn.geekhalo.webtech">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+	<!-- 缓存用redis取代 -->
+	<!-- spring 管理缓存  CacheTest中有实际中创建bean的方式 -->
+	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">  
+   		 <property name="configLocation" value="classpath:ehcache.xml"/>  
+   		 <property name="shared" value="true"></property>
+	</bean>  
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">  
+	    <property name="cacheManager" ref="ehcache"/>  
+	</bean> 
+	<!-- 登陆时验证码的配置 -->
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+		<property name="config">
+			<bean class="com.google.code.kaptcha.util.Config">
+				<!--通过构造函数注入属性值 -->
+				<constructor-arg type="java.util.Properties">
+					<props>
+						<!-- 验证码宽度 -->
+						<prop key="kaptcha.image.width">80</prop>
+						<!-- 验证码高度 -->
+						<prop key="kaptcha.image.height">30</prop>
+						<!-- 生成验证码内容范围 -->
+						<prop key="kaptcha.textproducer.char.string">1abcde23456789gfynmnpwxhz</prop>
+						<!-- 验证码个数 -->
+						<prop key="kaptcha.textproducer.char.length">4</prop>
+						<!-- 是否有边框 -->
+						<prop key="kaptcha.border">no</prop>
+						<!-- 验证码字体颜色 -->
+						<prop key="kaptcha.textproducer.font.color">blue</prop>
+						<!-- 验证码字体大小 -->
+						<prop key="kaptcha.textproducer.font.size">25</prop>
+						<!-- 验证码所属字体样式 -->
+						<prop key="kaptcha.textproducer.font.names">SimSun,Arial, Courier</prop>
+						<prop key="kaptcha.background.clear.from">white</prop>
+						<prop key="kaptcha.background.clear.to">white</prop>
+						<prop key="kaptcha.obscurificator.impl">com.google.code.kaptcha.impl.ShadowGimpy</prop>
+						<prop key="kaptcha.noise.impl">com.google.code.kaptcha.impl.NoNoise</prop>
+						<!-- 干扰线颜色 -->
+						<prop key="kaptcha.noise.color">blue</prop>
+						<!-- 验证码文本字符间距 -->
+						<prop key="kaptcha.textproducer.char.space">4</prop>
+					</props>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	<!-- 启用注解 -->
+	<cache:annotation-driven cache-manager="cacheManager" proxy-target-class="true"/> 
+    <import resource="spring-security.xml"/> 
+	<import resource="spring-data.xml"/>
+	<import resource="spring-redis.xml"/> 
+</beans>
