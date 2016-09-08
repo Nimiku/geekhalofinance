@@ -64,7 +64,7 @@ http://www.springframework.org/schema/cache/spring-cache.xsd">
 	</bean>
 	<!-- 启用注解 -->
 	<cache:annotation-driven cache-manager="cacheManager" proxy-target-class="true"/> 
-    <import resource="spring-security.xml"/> 
+    <!-- <import resource="spring-security.xml"/> 
 	<import resource="spring-data.xml"/>
-	<import resource="spring-redis.xml"/> 
+	<import resource="spring-redis.xml"/>  -->
 </beans>
