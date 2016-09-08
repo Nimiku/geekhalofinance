@@ -1,0 +1,1 @@
+# resources目录遵循静态页面开发的命名规则 js images css fonts 
