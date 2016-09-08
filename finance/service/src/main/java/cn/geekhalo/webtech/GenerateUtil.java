@@ -20,7 +20,7 @@ public class GenerateUtil {
 		
 	}
 	
-	public void generateCode(){
+	public void generateCode() throws Exception{
 		String workspace = System.getProperty("user.dir");
 		File f = new File(workspace+"/generator/mybatis_code_autoGenerator/mygenerator_mysql.xml");
 		SAXReader reader = new SAXReader();
