@@ -16,7 +16,7 @@ http://www.springframework.org/schema/mvc
 http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
 <!-- 启用基于spring annotation的DI @Autowired @Required @PostConstruct @Predestory   -->
 <context:annotation-config></context:annotation-config>
-<context:component-scan base-package="com.shourong.invest">
+<context:component-scan base-package="cn.geekhalo.webtech">
 	<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"></context:include-filter>
 	<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"></context:include-filter>
 </context:component-scan>
@@ -30,17 +30,17 @@ http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
     <mvc:interceptor>
         <mvc:mapping path="/**"/>
         <mvc:exclude-mapping path="/resources/**"/>
-        <bean class="com.shourong.invest.interceptor.LogInterceptor" />
+        <bean class="cn.geekhalo.webtech.interceptor.LogInterceptor" />
     </mvc:interceptor>
     <mvc:interceptor>
         <mvc:mapping path="/**"/>
         <mvc:exclude-mapping path="/resources/**"/>
-        <bean class="com.shourong.invest.interceptor.TokenInterceptor" />
+        <bean class="cn.geekhalo.webtech.interceptor.TokenInterceptor" />
     </mvc:interceptor>
     <!-- 配置拦截规则，只拦截 register下面的请求，这个地址也是生成给第三方和用户的推广地址开始-->
     <mvc:interceptor>
     	<mvc:mapping path="/register/**"/>
-    	<bean class="com.shourong.invest.interceptor.CookieInterceptor"></bean>
+    	<bean class="cn.geekhalo.webtech.interceptor.CookieInterceptor"></bean>
     </mvc:interceptor>
 </mvc:interceptors>
 <!-- 以下部分等价于mvc:annotation-driven-->
@@ -79,7 +79,7 @@ http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
 </bean> -->
 <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
-	<property name="prefix" value="/WEB-INF/jsp/"></property>
+	<property name="prefix" value="/WEB-INF/views/"></property>
 	<property name="suffix" value=".jsp"></property>
 </bean>
  <security:global-method-security

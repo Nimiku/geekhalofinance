@@ -51,10 +51,10 @@ http://www.springframework.org/schema/aop/spring-aop.xsd
 	<!-- myBatis文件 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="mapperLocations" value="classpath:com/shourong/invest/xml/*.xml" />
+		<property name="mapperLocations" value="classpath:cn/geekhao/webtech/mapper/*.xml" />
 	</bean>
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.shourong.invest.dao" />
+		<property name="basePackage" value="cn.geekhalo.webtech.dao" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 	<!-- 配置事务管理器 -->
@@ -97,7 +97,7 @@ http://www.springframework.org/schema/aop/spring-aop.xsd
 		</tx:attributes>
 	</tx:advice>
 	<aop:config>
-		<aop:pointcut id="transactionPointcut" expression="execution(* com.shourong.invest.service..*Impl.*(..))" />
+		<aop:pointcut id="transactionPointcut" expression="execution(* cn.geekhalo.webtech.service..*Impl.*(..))" />
 		<aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdvice" />
 	</aop:config>
 </beans>

@@ -29,7 +29,7 @@
    <session-management session-authentication-strategy-ref="sas" invalid-session-url="/member/memberLogin" session-authentication-error-url="/member/memberLogin">
    </session-management>
 </http>
-<beans:bean id="csrfMatcher" class="com.shourong.invest.base.security.spring.CsrfSecurityRequestMatcher"></beans:bean>
+<beans:bean id="csrfMatcher" class="cn.geekhalo.webtech.security.spring.CsrfSecurityRequestMatcher"></beans:bean>
 <beans:bean id="rememberMeFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
   <beans:property name="rememberMeServices" ref="rememberMeServices"/>
   <beans:property name="authenticationManager" ref="authenticationManager" />
@@ -52,17 +52,17 @@
 	<beans:property name="loginFormUrl" value="/member/memberLogin"></beans:property>
 	<beans:property name="useForward" value="true"></beans:property>
 </beans:bean>
-<beans:bean id="accessDecisionManager" class="com.shourong.invest.base.security.spring.CustomUnanimousBased">
+<beans:bean id="accessDecisionManager" class="cn.geekhalo.webtech.security.spring.CustomUnanimousBased">
 	<beans:property name="decisionVoters">
 		<beans:list>
 			<beans:bean id="webExpressionVoter" class="org.springframework.security.web.access.expression.WebExpressionVoter" /> 
 			<beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter"></beans:bean>
 			<beans:bean id="authenticationVoter" class="org.springframework.security.access.vote.AuthenticatedVoter"></beans:bean>
-			<!-- <beans:bean id="urlVoter" class="com.shourong.invest.base.security.spring.CustomUrlVoter"></beans:bean> -->
+			<!-- <beans:bean id="urlVoter" class="cn.geekhalo.webtech.security.spring.CustomUrlVoter"></beans:bean> -->
 		</beans:list>
 	</beans:property>
 </beans:bean>
-<beans:bean id="accessDeniedHandler" class="com.shourong.invest.base.security.spring.ShouRongAccessDeniedHandler">
+<beans:bean id="accessDeniedHandler" class="cn.geekhalo.webtech.security.spring.ShouRongAccessDeniedHandler">
 	<beans:property name="invalidCsrfTokenPage" value="/account/index"></beans:property>
 	<beans:property name="authPage" value="/account/authUser"></beans:property>
 	<beans:property name="loginPage" value="/member/memberLogin"></beans:property>
@@ -76,13 +76,13 @@
 <beans:bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
 	<beans:property name="key" value="trust_shourong"></beans:property>
 </beans:bean>
-<beans:bean name="customDaoAuthenticationProvider" class="com.shourong.invest.base.security.spring.CustomAuthenticationProvider">
+<beans:bean name="customDaoAuthenticationProvider" class="cn.geekhalo.webtech.security.spring.CustomAuthenticationProvider">
 	<beans:property name="passwordEncoder" ref="shaEncoder">
 	</beans:property>
 	<beans:property name="userDetailsService" ref="customDetailService"></beans:property>
 	<beans:property name="saltSource" ref="saltSource"></beans:property>
 </beans:bean>
-<beans:bean id="caSwitchLoginFilter" class="com.shourong.invest.base.security.spring.ShourongCaAuthenticationLoginFilter">
+<beans:bean id="caSwitchLoginFilter" class="cn.geekhalo.webtech.security.spring.ShourongCaAuthenticationLoginFilter">
 	<beans:property name="postOnly" value="true"></beans:property>
 	<beans:property name="filterProcessesUrl" value="/srLogin/sr_login"></beans:property>
 	<beans:property name="sessionAuthenticationStrategy" ref="sas"></beans:property>
@@ -94,7 +94,7 @@
 	<beans:property name="rememberMeServices" ref="rememberMeServices"></beans:property>
 </beans:bean>
 <!-- 自定义的查询用户权限的实现类 -->
-<beans:bean id="customDetailService" class="com.shourong.invest.base.security.spring.CustomDaoUserDetailsService">
+<beans:bean id="customDetailService" class="cn.geekhalo.webtech.security.spring.CustomDaoUserDetailsService">
 </beans:bean>
 <beans:bean name="shaEncoder"
     class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
@@ -109,11 +109,11 @@
 	<beans:property name="expiredUrl" value="/member/memberLogin"></beans:property>
 </beans:bean>
 <!-- 登录成功处理器 -->
-<beans:bean id="authenticationSuccessHandler" class="com.shourong.invest.base.security.spring.CustomAuthenticationSuccessHandler">
+<beans:bean id="authenticationSuccessHandler" class="cn.geekhalo.webtech.security.spring.CustomAuthenticationSuccessHandler">
 	<beans:property name="defaultTargetUrl" value="/account/index"></beans:property>
 </beans:bean>
 <!-- 登录失败处理器 -->
-<beans:bean id="authenticationFailureHandler" class="com.shourong.invest.base.security.spring.CustomSimpleUrlAuthenticationFailureHandler">
+<beans:bean id="authenticationFailureHandler" class="cn.geekhalo.webtech.security.spring.CustomSimpleUrlAuthenticationFailureHandler">
 	<beans:property name="defaultFailureUrl" value="/member/memberLogin"></beans:property>
 </beans:bean>
 <!-- session 注册表 -->

@@ -17,7 +17,7 @@ http://www.springframework.org/schema/cache/spring-cache.xsd">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
 	</context:component-scan>
-	<!-- 缓存用redis取代 -->
+	<!-- 缓存部分可以用redis取代，二级缓存性能更好 -->
 	<!-- spring 管理缓存  CacheTest中有实际中创建bean的方式 -->
 	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">  
    		 <property name="configLocation" value="classpath:ehcache.xml"/>  
