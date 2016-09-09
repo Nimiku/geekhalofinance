@@ -1,9 +1,25 @@
 # geekhalofinance
 popular web development technologies
 #main architecture
-springmvc+spring+mybatis+spring-security+spring-data-redis+spring-integration
-+redis(sentinel)+zookeeper(cluster)+dubbox+flume+kafka(cluster)+nginx(cluster)
-+elasticsearch/solr/lucene+redis+mysql+spring-session(cluster session)+storm+grpc
++ springmvc
++ spring
++ mybatis
++ spring-security
++ spring-data-redis
++ spring-integration
++ redis(sentinel)
++ zookeeper(cluster)
++ dubbox
++ flume
++ kafka(cluster)
++ nginx(cluster)
++ elasticsearch/solr/lucene
++ redis
++ mysql
++ spring-session(cluster session)
++ storm
++ grpc
++ quartz(cluster)
 #tools
 guava+joda-time+jodd+strman+commons(serials)+mybatis-generator
 #front tech
