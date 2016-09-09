@@ -20,9 +20,10 @@ popular web development technologies
 + storm
 + grpc
 + quartz(cluster)
-#tools
+
+## tools(jar)
 guava+joda-time+jodd+strman+commons(serials)+mybatis-generator
-#front tech
+# front tech
 bootstrap+sea.js+sencha touch(wap)+grunt.js(webpack)
 #plugins
 1. [waypoints](http://imakewebthings.com/waypoints/api/waypoint/)定位，插件
